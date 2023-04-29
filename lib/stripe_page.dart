@@ -35,7 +35,24 @@ class _StripePageState extends State<StripePage> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  await makePayment();
+                  await Stripe.instance.dangerouslyUpdateCardDetails(
+                    CardDetails(
+                      number: '5555-5555-5555-4444',
+                      cvc: '123',
+                      expirationMonth: 12,
+                      expirationYear: 26,
+                    ),
+                  );
+
+                  final paymentMethod =
+                      await Stripe.instance.createPaymentMethod(
+                    params: const PaymentMethodParams.card(
+                      paymentMethodData: PaymentMethodData(
+                        billingDetails: BillingDetails(),
+                      ),
+                    ),
+                  );
+                  log(paymentMethod.id);
                 },
                 child: const Text(
                   "Make payment",
